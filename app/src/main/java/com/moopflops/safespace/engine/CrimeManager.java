@@ -19,7 +19,6 @@ public class CrimeManager {
   public interface CrimeCallback {
     void onSuccess(List<Crime> crimes);
     void onFail(Throwable t);
-    void onPatIsADickhead();
     void onProgressUpdate(int progress);
   }
 

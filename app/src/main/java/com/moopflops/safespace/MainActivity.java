@@ -5,14 +5,21 @@ import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.google.android.gms.maps.GoogleMap;
+import com.moopflops.safespace.engine.CarParkManager;
+import com.moopflops.safespace.engine.CrimeManager;
+import com.moopflops.safespace.engine.RatingUtils;
+import com.moopflops.safespace.engine.model.CarPark;
+import com.moopflops.safespace.engine.model.Crime;
 import com.moopflops.safespace.ui.Utils;
 import com.moopflops.safespace.ui.activities.FiltersActivity;
 import com.moopflops.safespace.ui.fragments.MapFragment;
 import com.moopflops.safespace.ui.fragments.NavigationDrawerFragment;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements NavigationDrawerFragment.NavDrawerCallbacks{
 
@@ -32,6 +39,45 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         mNavDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
 
         mNavDrawerFragment.setUp(R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout));
+
+        getCrimes();
+    }
+
+    private void getCrimes() {
+        CrimeManager.getVehicleCrimes(2015, 10, 6, new CrimeManager.CrimeCallback() {
+            @Override
+            public void onSuccess(List<Crime> crimes) {
+                getCarParks(crimes);
+            }
+
+            @Override
+            public void onFail(Throwable t) {
+
+            }
+
+            @Override
+            public void onProgressUpdate(int progress) {
+
+            }
+        });
+    }
+
+    private void getCarParks(final List<Crime> crimes) {
+        CarParkManager.getCarParks(new CarParkManager.CarParkCallbacks() {
+            @Override
+            public void onSuccess(List<CarPark> carParks) {
+                long startTime = System.currentTimeMillis();
+                for(CarPark c : carParks) {
+                    Log.d("CRIME", RatingUtils.getRatingForLocation(c.getLocation(), crimes) + " rating for " + c.name + "(" + c.getLocation().latitude+","+c.getLocation().longitude+")");
+                }
+                Log.d("TIME TAKEN", System.currentTimeMillis() - startTime + "ms");
+            }
+
+            @Override
+            public void onFail(Throwable t) {
+
+            }
+        });
     }
 
     @Override
