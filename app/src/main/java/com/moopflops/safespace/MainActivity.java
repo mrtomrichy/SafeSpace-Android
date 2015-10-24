@@ -1,15 +1,23 @@
 package com.moopflops.safespace;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MainActivity extends AppCompatActivity {
+import com.google.android.gms.maps.GoogleMap;
+import com.moopflops.safespace.ui.Utils;
+import com.moopflops.safespace.ui.activities.FiltersActivity;
+import com.moopflops.safespace.ui.fragments.MapFragment;
+import com.moopflops.safespace.ui.fragments.NavigationDrawerFragment;
+
+public class MainActivity extends AppCompatActivity implements NavigationDrawerFragment.NavDrawerCallbacks{
+
+    NavigationDrawerFragment mNavDrawerFragment;
+    MapFragment mMapFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,14 +26,12 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-       FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+
+        mMapFragment = MapFragment.newInstance();
+        Utils.addFragment(this, mMapFragment);
+        mNavDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
+
+        mNavDrawerFragment.setUp(R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout));
     }
 
     @Override
@@ -43,10 +49,31 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_filters) {
+            startActivity(new Intent(getApplicationContext(), FiltersActivity.class));
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+
+    @Override
+    public void onBackPressed(){
+        if(mNavDrawerFragment.drawerIsOpen()){
+            mNavDrawerFragment.closeDrawer();
+        } else {
+            finish();
+        }
+    }
+
+    @Override
+    public void satellite() {
+        mMapFragment.toggleSatellite();
+    }
+
+    @Override
+    public void traffic() {
+        mMapFragment.toggleTraffic();
     }
 }
