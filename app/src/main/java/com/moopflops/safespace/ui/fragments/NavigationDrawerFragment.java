@@ -169,5 +169,4 @@ public class NavigationDrawerFragment extends Fragment{
         void satellite();
         void traffic();
     }
-
 }
