@@ -6,6 +6,8 @@ import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
 import android.media.Image;
 import android.view.LayoutInflater;
@@ -20,13 +22,18 @@ import com.moopflops.safespace.R;
  */
 public class CarParkMapPin extends FrameLayout {
 
-    public CarParkMapPin(Context context, int colour, int spaces) {
+    public CarParkMapPin(Context context, int colour, String rating) {
         super(context);
         addView(LayoutInflater.from(getContext()).inflate(R.layout.map_pin_layout, null));
 
-        ((ImageView) findViewById(R.id.map_pin_background)).setBackground(new PinBackground(getContext(), colour));
+//        ((ImageView) findViewById(R.id.map_pin_background)).setBackground(new PinBackground(getContext(), colour));
 
-        ((TextView) findViewById(R.id.spaces_free)).setText(String.valueOf(spaces));
+        Drawable tintedDrawable = getResources().getDrawable(R.drawable.map_pin).getConstantState().newDrawable().mutate();
+        tintedDrawable.setColorFilter(new PorterDuffColorFilter(colour, PorterDuff.Mode.MULTIPLY));
+        ((ImageView) findViewById(R.id.map_pin_background)).setBackground(tintedDrawable);
+
+
+        ((TextView) findViewById(R.id.spaces_free)).setText(rating);
     }
 
     public class PinBackground extends Drawable{

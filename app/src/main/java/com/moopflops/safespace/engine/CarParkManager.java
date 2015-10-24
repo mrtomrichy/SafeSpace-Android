@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import co.uk.rushorm.core.Rush;
+import co.uk.rushorm.core.RushCore;
+import co.uk.rushorm.core.RushSearch;
 import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
@@ -23,7 +26,15 @@ public class CarParkManager {
   }
 
   public static void getCarParks(CarParkCallbacks callbacks) {
+//    List<CarPark> carParks = new RushSearch().find(CarPark.class);
+//    if(carParks.size() > 0){
+//      callbacks.onSuccess(carParks);
+//    }else {
+//      makeCarParkRequest(0, callbacks, new ArrayList<CarPark>());
+//    }
+
     makeCarParkRequest(0, callbacks, new ArrayList<CarPark>());
+
   }
 
   private static float min(float[] floats) {
@@ -59,7 +70,9 @@ public class CarParkManager {
         if(response.body().size() == 20) {
           makeCarParkRequest(currentPageNum + 1, callback, carParks);
         } else {
-          removeOutOfScopeCarParks(carParks);
+//          removeOutOfScopeCarParks(carParks);
+
+          RushCore.getInstance().save(carParks);
           callback.onSuccess(carParks);
         }
       }

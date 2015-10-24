@@ -22,6 +22,10 @@ public class CrimeManager {
     void onProgressUpdate(int progress);
   }
 
+  public static void getVehicleCrimesDefault(CrimeCallback callback){
+    getVehicleCrimes(2015, 10, 12, callback);
+  }
+
   public static void getVehicleCrimes(int year, int month, int monthCount, CrimeCallback callback) {
     Calendar c = Calendar.getInstance();
     c.set(year, month, 0);

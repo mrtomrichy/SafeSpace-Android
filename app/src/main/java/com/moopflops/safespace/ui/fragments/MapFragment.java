@@ -14,8 +14,18 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.moopflops.safespace.R;
+import com.moopflops.safespace.engine.CarParkManager;
+import com.moopflops.safespace.engine.CrimeManager;
+import com.moopflops.safespace.engine.RatingUtils;
+import com.moopflops.safespace.engine.model.CarPark;
+import com.moopflops.safespace.engine.model.Crime;
+import com.moopflops.safespace.engine.model.RatedCarPark;
 import com.moopflops.safespace.ui.Utils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by patrickc on 24/10/15.
@@ -26,6 +36,9 @@ public class MapFragment extends Fragment {
 
     SupportMapFragment mMapFragment;
     GoogleMap mGoogleMap;
+
+    List<RatedCarPark> mCarParks = new ArrayList<>();
+    List<Crime> mCrimes = new ArrayList<>();
 
     public static MapFragment newInstance() {
         return new MapFragment();
@@ -45,7 +58,16 @@ public class MapFragment extends Fragment {
         });
 
         Utils.addChildFragment(this, mMapFragment, R.id.map_container);
+
         return rootView;
+    }
+
+
+    private void addMapPins(){
+        for(RatedCarPark ratedCarPark : mCarParks){
+            mGoogleMap.addMarker(new MarkerOptions().position(new LatLng(ratedCarPark.carPark.latitude, ratedCarPark.carPark.longitude)))
+                    .setIcon(Utils.getIcon(getContext(), ratedCarPark.rating, ratedCarPark.getRating()));
+        }
     }
 
     private void setUpMap(){
@@ -54,6 +76,44 @@ public class MapFragment extends Fragment {
             public void onCameraChange(CameraPosition cameraPosition) {
                 mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(manchesterHype, 0));
                 mGoogleMap.setOnCameraChangeListener(null);
+            }
+        });
+        getCrimes();
+    }
+
+    private void getCrimes() {
+        CrimeManager.getVehicleCrimesDefault(new CrimeManager.CrimeCallback() {
+            @Override
+            public void onSuccess(List<Crime> crimes) {
+                mCrimes = crimes;
+                setUpCarParks();
+            }
+
+            @Override
+            public void onFail(Throwable t) {
+
+            }
+
+            @Override
+            public void onProgressUpdate(int progress) {
+
+            }
+        });
+    }
+
+    private void setUpCarParks(){
+        CarParkManager.getCarParks(new CarParkManager.CarParkCallbacks() {
+            @Override
+            public void onSuccess(List<CarPark> carParks) {
+                for(CarPark carPark : carParks){
+                    mCarParks.add(new RatedCarPark(carPark, RatingUtils.getRatingForLocation(carPark.getLocation(), mCrimes)));
+                }
+                addMapPins();
+            }
+
+            @Override
+            public void onFail(Throwable t) {
+
             }
         });
     }

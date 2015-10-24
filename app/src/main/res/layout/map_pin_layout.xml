@@ -11,12 +11,11 @@
         android:layout_height="@dimen/map_pin_height"/>
 
     <TextView
+        style="@style/MapPinText"
         android:id="@+id/spaces_free"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/map_pin_margin"
-        android:layout_centerHorizontal="true"
-        android:textColor="@color/text_grey"
-        tools:text="123"/>
+        android:layout_centerHorizontal="true"/>
 
 </RelativeLayout>

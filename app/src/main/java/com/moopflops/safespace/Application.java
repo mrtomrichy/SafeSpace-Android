@@ -2,6 +2,7 @@ package com.moopflops.safespace;
 
 import com.moopflops.safespace.engine.model.CarPark;
 import com.moopflops.safespace.engine.model.Crime;
+import com.moopflops.safespace.ui.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,5 +27,7 @@ public class Application extends android.app.Application {
     classes.add(Crime.class);
     config.setClasses(classes);
     RushCore.initialize(config);
+
+    Utils.initColours(this);
   }
 }

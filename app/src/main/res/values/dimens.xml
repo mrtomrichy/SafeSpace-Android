@@ -7,8 +7,8 @@
     <dimen name="default_padding">8dip</dimen>
     <dimen name="white_width">6dip</dimen>
 
-    <dimen name="map_pin_width">48dip</dimen>
-    <dimen name="map_pin_height">72dip</dimen>
-    <dimen name="map_pin_margin">14dip</dimen>
+    <dimen name="map_pin_width">36dip</dimen>
+    <dimen name="map_pin_height">54dip</dimen>
+    <dimen name="map_pin_margin">10dip</dimen>
 
 </resources>
