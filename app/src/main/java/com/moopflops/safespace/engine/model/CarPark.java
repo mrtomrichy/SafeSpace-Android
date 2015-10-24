@@ -18,7 +18,7 @@ public class CarPark extends RushObject {
   public String lastUpdated;
   @SerializedName("Latitude")
   public double latitude;
-  @SerializedName("Longtude")
+  @SerializedName("Longitude")
   public double longitude;
   @SerializedName("SCN")
   public String scn;
@@ -30,5 +30,9 @@ public class CarPark extends RushObject {
   public int spaces30;
   @SerializedName("PredictedSpaces60Mins")
   public int spaces60;
+
+  public Location getLocation() {
+    return new Location(latitude, longitude);
+  }
 
 }

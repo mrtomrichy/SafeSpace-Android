@@ -19,7 +19,6 @@ public class CrimeManager {
   public interface CrimeCallback {
     void onSuccess(List<Crime> crimes);
     void onFail(Throwable t);
-    void onPatIsADickhead();
     void onProgressUpdate(int progress);
   }
 
@@ -27,8 +26,12 @@ public class CrimeManager {
     Calendar c = Calendar.getInstance();
     c.set(year, month, 0);
 
-
-    makeVehicleCrimeRequest(c, 0, monthCount, new ArrayList<Crime>(), callback);
+    List<Crime> crimes = new RushSearch().find(Crime.class);
+    if(crimes.size() > 0) {
+      callback.onSuccess(crimes);
+    } else {
+      makeVehicleCrimeRequest(c, 0, monthCount, new ArrayList<Crime>(), callback);
+    }
   }
 
   private static void makeVehicleCrimeRequest(final Calendar c, final int currentMonthCount, final int monthCount, final List<Crime> crimes, final CrimeCallback callback) {
