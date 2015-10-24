@@ -1,4 +1,4 @@
-package com.moopflops.safespace.ui.activities.components;
+package com.moopflops.safespace.ui.components;
 
 import android.content.Context;
 import android.util.AttributeSet;

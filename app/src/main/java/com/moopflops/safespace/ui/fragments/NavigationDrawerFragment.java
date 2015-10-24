@@ -16,7 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.moopflops.safespace.R;
-import com.moopflops.safespace.ui.activities.components.SelectableTextView;
+import com.moopflops.safespace.ui.components.SelectableTextView;
 
 /**
  * Created by patrickc on 24/10/15.

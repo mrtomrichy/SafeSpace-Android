@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="@dimen/map_pin_width"
+    android:layout_height="@dimen/map_pin_height">
+
+    <ImageView
+        android:id="@+id/map_pin_background"
+        android:layout_width="@dimen/map_pin_width"
+        android:layout_height="@dimen/map_pin_height"/>
+
+    <TextView
+        android:id="@+id/spaces_free"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/map_pin_margin"
+        android:layout_centerHorizontal="true"
+        android:textColor="@color/text_grey"
+        tools:text="123"/>
+
+</RelativeLayout>

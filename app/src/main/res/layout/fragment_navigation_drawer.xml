@@ -22,7 +22,7 @@
         android:layout_height="128dip"
         android:background="@color/colorPrimary"/>
 
-    <com.moopflops.safespace.ui.activities.components.SelectableTextView
+    <com.moopflops.safespace.ui.components.SelectableTextView
         android:id="@+id/satellite_button"
         android:layout_width="match_parent"
         android:layout_height="@dimen/button_height"
@@ -34,7 +34,7 @@
         android:drawableStart="@drawable/ic_satellite_grey600_24dp"
         android:drawablePadding="@dimen/default_padding"/>
 
-    <com.moopflops.safespace.ui.activities.components.SelectableTextView
+    <com.moopflops.safespace.ui.components.SelectableTextView
         android:id="@+id/traffic_button"
         android:layout_width="match_parent"
         android:layout_height="@dimen/button_height"

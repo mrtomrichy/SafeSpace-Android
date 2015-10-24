@@ -5,4 +5,10 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="button_height">48dip</dimen>
     <dimen name="default_padding">8dip</dimen>
+    <dimen name="white_width">6dip</dimen>
+
+    <dimen name="map_pin_width">48dip</dimen>
+    <dimen name="map_pin_height">72dip</dimen>
+    <dimen name="map_pin_margin">14dip</dimen>
+
 </resources>

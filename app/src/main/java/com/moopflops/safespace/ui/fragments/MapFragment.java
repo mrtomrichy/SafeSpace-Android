@@ -45,8 +45,6 @@ public class MapFragment extends Fragment {
         });
 
         Utils.addChildFragment(this, mMapFragment, R.id.map_container);
-
-
         return rootView;
     }
 
