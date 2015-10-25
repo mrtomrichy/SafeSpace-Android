@@ -6,7 +6,9 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -17,6 +19,7 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.moopflops.safespace.R;
 import com.moopflops.safespace.engine.CarParkManager;
+import com.moopflops.safespace.engine.Constants;
 import com.moopflops.safespace.engine.CrimeManager;
 import com.moopflops.safespace.engine.RatingUtils;
 import com.moopflops.safespace.engine.model.CarPark;
@@ -32,13 +35,10 @@ import java.util.List;
  */
 public class MapFragment extends Fragment {
 
-    private static final LatLngBounds manchesterHype = new LatLngBounds(new LatLng(53.398070, -2.392273), new LatLng(53.545612, -2.112122));
-
     SupportMapFragment mMapFragment;
     GoogleMap mGoogleMap;
 
-    List<RatedCarPark> mCarParks = new ArrayList<>();
-    List<Crime> mCrimes = new ArrayList<>();
+    List<RatedCarPark> mRatedCarParks = new ArrayList<>();
 
     public static MapFragment newInstance() {
         return new MapFragment();
@@ -64,28 +64,37 @@ public class MapFragment extends Fragment {
 
 
     private void addMapPins(){
-        for(RatedCarPark ratedCarPark : mCarParks){
+        for(RatedCarPark ratedCarPark : mRatedCarParks){
             mGoogleMap.addMarker(new MarkerOptions().position(new LatLng(ratedCarPark.carPark.latitude, ratedCarPark.carPark.longitude)))
-                    .setIcon(Utils.getIcon(getContext(), ratedCarPark.rating, ratedCarPark.getRating()));
+                    .setIcon(Utils.getIcon(getContext(), ratedCarPark.getColour(getContext()), ratedCarPark.getRating()));
         }
     }
 
     private void setUpMap(){
-        mGoogleMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
-            @Override
-            public void onCameraChange(CameraPosition cameraPosition) {
-                mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(manchesterHype, 0));
-                mGoogleMap.setOnCameraChangeListener(null);
-            }
-        });
+        mGoogleMap.setPadding(32, 32, 32, 32);
+        setMapBounds(Constants.getDefaultBounds());
         getCrimes();
     }
 
+    private void setMapBounds(final LatLngBounds bounds){
+        mGoogleMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
+            @Override
+            public void onCameraChange(CameraPosition cameraPosition) {
+                mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 0));
+                mGoogleMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
+                    @Override
+                    public void onCameraChange(CameraPosition cameraPosition) {
+
+                    }
+                });
+            }
+        });
+    }
+
     private void getCrimes() {
-        CrimeManager.getVehicleCrimesDefault(new CrimeManager.CrimeCallback() {
+        CrimeManager.getInstance().getVehicleCrimesDefault(new CrimeManager.CrimeCallback() {
             @Override
             public void onSuccess(List<Crime> crimes) {
-                mCrimes = crimes;
                 setUpCarParks();
             }
 
@@ -102,14 +111,34 @@ public class MapFragment extends Fragment {
     }
 
     private void setUpCarParks(){
-        CarParkManager.getCarParks(new CarParkManager.CarParkCallbacks() {
+        CarParkManager.getInstance().getCarParks(new CarParkManager.CarParkCallbacks() {
             @Override
             public void onSuccess(List<CarPark> carParks) {
-                for(CarPark carPark : carParks){
-                    mCarParks.add(new RatedCarPark(carPark, RatingUtils.getRatingForLocation(carPark.getLocation(), mCrimes)));
+                double left = Double.MAX_VALUE, right = -Double.MAX_VALUE, top = Double.MAX_VALUE, bottom = -Double.MAX_VALUE;
+                for (CarPark carPark : carParks) {
+                    mRatedCarParks.add(new RatedCarPark(carPark, RatingUtils.getRatingForLocation(carPark.getLocation(), CrimeManager.getInstance().getCrimes())));
+
+                    if (carPark.latitude < left) {
+                        left = carPark.latitude;
+                    }
+
+                    if (carPark.latitude > right) {
+                        right = carPark.latitude;
+                    }
+
+                    if (carPark.longitude > bottom) {
+                        bottom = carPark.longitude;
+                    }
+
+                    if (carPark.longitude < top) {
+                        top = carPark.longitude;
+                    }
                 }
+
+//                mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(new LatLngBounds(new LatLng(left, bottom), new LatLng(right, top)), 10));
                 addMapPins();
             }
+
 
             @Override
             public void onFail(Throwable t) {
@@ -122,8 +151,9 @@ public class MapFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
 //        try {
+//            mCallback = (MapCallback) getContext();
 //        } catch (ClassCastException e) {
-//            throw new ClassCastException("Implement NavDrawerCallbacks Yo!");
+//            throw new ClassCastException("Implement MapCallbacks Yo!");
 //        }
     }
 
@@ -133,5 +163,9 @@ public class MapFragment extends Fragment {
 
     public void toggleSatellite() {
         mGoogleMap.setMapType(mGoogleMap.getMapType() == GoogleMap.MAP_TYPE_NORMAL ? GoogleMap.MAP_TYPE_HYBRID : GoogleMap.MAP_TYPE_NORMAL);
+    }
+
+    public void heatMap() {
+        //TODO HEAT MAP
     }
 }

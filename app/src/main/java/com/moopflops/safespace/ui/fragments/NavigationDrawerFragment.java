@@ -14,9 +14,16 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.moopflops.safespace.R;
+import com.moopflops.safespace.engine.CarParkManager;
+import com.moopflops.safespace.engine.CrimeManager;
+import com.moopflops.safespace.engine.model.CarPark;
+import com.moopflops.safespace.engine.model.Crime;
 import com.moopflops.safespace.ui.components.SelectableTextView;
+
+import java.util.List;
 
 /**
  * Created by patrickc on 24/10/15.
@@ -30,6 +37,12 @@ public class NavigationDrawerFragment extends Fragment{
 
     private SelectableTextView mTrafficText;
     private SelectableTextView mSatelliteText;
+    private SelectableTextView mHeatMapText;
+
+    private TextView mTotalSpacesText;
+    private TextView mTotalCrimesText;
+
+    int spaces = 0;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -52,7 +65,10 @@ public class NavigationDrawerFragment extends Fragment{
 
         mTrafficText = (SelectableTextView) rootView.findViewById(R.id.traffic_button);
         mSatelliteText = (SelectableTextView) rootView.findViewById(R.id.satellite_button);
+        mHeatMapText = (SelectableTextView) rootView.findViewById(R.id.heat_map);
 
+        mTotalCrimesText = (TextView) rootView.findViewById(R.id.total_crimes);
+        mTotalSpacesText = (TextView) rootView.findViewById(R.id.total_spaces);
 
         mSatelliteText.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,6 +88,15 @@ public class NavigationDrawerFragment extends Fragment{
             }
         });
 
+        mHeatMapText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                closeDrawer();
+                mHeatMapText.toggleSelected();
+                mListener.heatMap();
+            }
+        });
+
         return rootView;
     }
 
@@ -84,8 +109,7 @@ public class NavigationDrawerFragment extends Fragment{
         actionBar.setHomeButtonEnabled(true);
 
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
-        mDrawerToggle = new ActionBarDrawerToggle(getActivity(), mDrawerLayout, R.string.open, R.string.close)
-         {
+        mDrawerToggle = new ActionBarDrawerToggle(getActivity(), mDrawerLayout, R.string.open, R.string.close){
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
@@ -120,6 +144,46 @@ public class NavigationDrawerFragment extends Fragment{
         });
 
         mDrawerLayout.setDrawerListener(mDrawerToggle);
+
+
+        setTotalCrimes();
+        setTotalSpaces();
+    }
+
+    public void setTotalSpaces(){
+        CarParkManager.getInstance().getCarParks(new CarParkManager.CarParkCallbacks() {
+            @Override
+            public void onSuccess(List<CarPark> carParks) {
+                for (CarPark carPark : carParks) {
+                    spaces += carPark.spacesNow;
+                }
+                mTotalSpacesText.setText("Total Spaces: " + spaces);
+            }
+
+            @Override
+            public void onFail(Throwable t) {
+
+            }
+        });
+    }
+
+    public void setTotalCrimes(){
+        CrimeManager.getInstance().getVehicleCrimesDefault(new CrimeManager.CrimeCallback() {
+            @Override
+            public void onSuccess(List<Crime> crimes) {
+                mTotalCrimesText.setText("Total Crimes: " + crimes.size());
+            }
+
+            @Override
+            public void onFail(Throwable t) {
+
+            }
+
+            @Override
+            public void onProgressUpdate(int progress) {
+
+            }
+        });
     }
 
     @Override
@@ -168,5 +232,6 @@ public class NavigationDrawerFragment extends Fragment{
     public interface NavDrawerCallbacks{
         void satellite();
         void traffic();
+        void heatMap();
     }
 }

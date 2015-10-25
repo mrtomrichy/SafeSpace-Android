@@ -27,7 +27,5 @@ public class Application extends android.app.Application {
     classes.add(Crime.class);
     config.setClasses(classes);
     RushCore.initialize(config);
-
-    Utils.initColours(this);
   }
 }

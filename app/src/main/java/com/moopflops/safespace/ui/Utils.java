@@ -18,15 +18,6 @@ import com.moopflops.safespace.ui.components.CarParkMapPin;
  */
 public class Utils {
 
-    public static int good;
-    public static int okay;
-    public static int danger;
-
-    public static void initColours(Context context){
-        good = context.getResources().getColor(R.color.goodGreen);
-        okay = context.getResources().getColor(R.color.okayOrange);
-        danger = context.getResources().getColor(R.color.riskyRed);
-    }
 
     public static void addFragment(AppCompatActivity activity, Fragment fragment){
         activity.getSupportFragmentManager().beginTransaction().replace(R.id.main_container, fragment).commit();
@@ -36,29 +27,29 @@ public class Utils {
         host.getChildFragmentManager().beginTransaction().replace(resId, fragment).commit();
     }
 
-    public static int getCrimeColour(int severity){
-        float ratio = severity/100f;
+//    public static int getCrimeColour(int severity){
+//        float ratio = severity/100f;
+//
+//        int first;
+//        int second;
+//
+//        if(ratio > 0.5f){
+//            first = okay;
+//            second = danger;
+//        } else{
+//            first = good;
+//            second = okay;
+//        }
+//
+//        int red = (int) (Color.red(first) * ratio + Color.red(second) * (1 - ratio));
+//        int green = (int) (Color.green(first) * ratio + Color.green(second) * (1 - ratio));
+//        int blue = (int) (Color.blue(first) * ratio + Color.blue(second) * (1 - ratio));
+//
+//        return Color.rgb(red, green, blue);
+//    }
 
-        int first;
-        int second;
-
-        if(ratio > 0.5f){
-            first = okay;
-            second = danger;
-        } else{
-            first = good;
-            second = okay;
-        }
-
-        int red = (int) (Color.red(first) * ratio + Color.red(second) * (1 - ratio));
-        int green = (int) (Color.green(first) * ratio + Color.green(second) * (1 - ratio));
-        int blue = (int) (Color.blue(first) * ratio + Color.blue(second) * (1 - ratio));
-
-        return Color.rgb(red, green, blue);
-    }
-
-    public static BitmapDescriptor getIcon(Context context, int severity, String rating){
-        View view = new CarParkMapPin(context, getCrimeColour(severity), rating);
+    public static BitmapDescriptor getIcon(Context context, int colour, String rating){
+        View view = new CarParkMapPin(context, colour, rating);
 
         int width = (int)context.getResources().getDimension(R.dimen.map_pin_width);
         int height = (int) context.getResources().getDimension(R.dimen.map_pin_height);

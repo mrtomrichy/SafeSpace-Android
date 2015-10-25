@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import co.uk.rushorm.core.Rush;
 import co.uk.rushorm.core.RushCore;
 import co.uk.rushorm.core.RushSearch;
 import retrofit.Callback;
@@ -20,35 +19,40 @@ import retrofit.Retrofit;
  */
 public class CarParkManager {
 
+  private static List<CarPark> mCarParks;
+
+  private static CarParkManager mInstance;
+
+  private CarParkManager(){
+  }
+
+  public static CarParkManager getInstance(){
+    if(mInstance == null){
+      mInstance = new CarParkManager();
+    }
+    return mInstance;
+  }
+
   public interface CarParkCallbacks {
     void onSuccess(List<CarPark> carParks);
     void onFail(Throwable t);
   }
 
-  public static void getCarParks(CarParkCallbacks callbacks) {
-//    List<CarPark> carParks = new RushSearch().find(CarPark.class);
-//    if(carParks.size() > 0){
-//      callbacks.onSuccess(carParks);
-//    }else {
-//      makeCarParkRequest(0, callbacks, new ArrayList<CarPark>());
-//    }
-
-    makeCarParkRequest(0, callbacks, new ArrayList<CarPark>());
-
-  }
-
-  private static float min(float[] floats) {
-    float smallest = Float.MAX_VALUE;
-    for(float f : floats) {
-      if(f < smallest) {
-        smallest = f;
+  public void getCarParks(CarParkCallbacks callbacks) {
+    if(mCarParks != null) {
+      callbacks.onSuccess(mCarParks);
+    } else {
+      List<CarPark> carParks = new RushSearch().find(CarPark.class);
+      if(carParks.size() > 0){
+        mCarParks = carParks;
+        callbacks.onSuccess(carParks);
+      }else {
+        makeCarParkRequest(0, callbacks, new ArrayList<CarPark>());
       }
     }
-
-    return smallest;
   }
 
-  private static void removeOutOfScopeCarParks(List<CarPark> carParks) {
+  private void removeOutOfScopeCarParks(List<CarPark> carParks) {
     LatLngBounds bounds = Constants.getDefaultBounds();
     Iterator it = carParks.iterator();
     CarPark c;
@@ -61,7 +65,7 @@ public class CarParkManager {
   }
 
   // This method is recursive for fucks sake why :'(
-  private static void makeCarParkRequest(final int currentPageNum, final CarParkCallbacks callback, final List<CarPark> carParks) {
+  private void makeCarParkRequest(final int currentPageNum, final CarParkCallbacks callback, final List<CarPark> carParks) {
     RetrofitClient.tfgm().carParks(currentPageNum, 20).enqueue(new Callback<List<CarPark>>() {
       @Override
       public void onResponse(Response<List<CarPark>> response, Retrofit retrofit) {
@@ -70,9 +74,10 @@ public class CarParkManager {
         if(response.body().size() == 20) {
           makeCarParkRequest(currentPageNum + 1, callback, carParks);
         } else {
-//          removeOutOfScopeCarParks(carParks);
+          removeOutOfScopeCarParks(carParks);
 
           RushCore.getInstance().save(carParks);
+          mCarParks = carParks;
           callback.onSuccess(carParks);
         }
       }

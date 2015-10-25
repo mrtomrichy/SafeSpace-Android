@@ -40,44 +40,6 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
 
         mNavDrawerFragment.setUp(R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout));
 
-        getCrimes();
-    }
-
-    private void getCrimes() {
-        CrimeManager.getVehicleCrimes(2015, 10, 6, new CrimeManager.CrimeCallback() {
-            @Override
-            public void onSuccess(List<Crime> crimes) {
-                getCarParks(crimes);
-            }
-
-            @Override
-            public void onFail(Throwable t) {
-
-            }
-
-            @Override
-            public void onProgressUpdate(int progress) {
-
-            }
-        });
-    }
-
-    private void getCarParks(final List<Crime> crimes) {
-        CarParkManager.getCarParks(new CarParkManager.CarParkCallbacks() {
-            @Override
-            public void onSuccess(List<CarPark> carParks) {
-                long startTime = System.currentTimeMillis();
-                for(CarPark c : carParks) {
-                    Log.d("CRIME", RatingUtils.getRatingForLocation(c.getLocation(), crimes) + " rating for " + c.name + "(" + c.getLocation().latitude+","+c.getLocation().longitude+")");
-                }
-                Log.d("TIME TAKEN", System.currentTimeMillis() - startTime + "ms");
-            }
-
-            @Override
-            public void onFail(Throwable t) {
-
-            }
-        });
     }
 
     @Override
@@ -121,5 +83,10 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
     @Override
     public void traffic() {
         mMapFragment.toggleTraffic();
+    }
+
+    @Override
+    public void heatMap() {
+        mMapFragment.heatMap();
     }
 }

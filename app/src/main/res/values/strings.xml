@@ -10,4 +10,5 @@
     <string name="default_map">Default</string>
     <string name="close">CLose</string>
     <string name="open">Open</string>
+    <string name="heat_map">Heat Map</string>
 </resources>

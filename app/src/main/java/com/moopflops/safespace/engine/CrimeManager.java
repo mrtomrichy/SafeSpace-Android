@@ -16,30 +16,53 @@ import retrofit.Retrofit;
  */
 public class CrimeManager {
 
+  private List<Crime> mCrimes;
+  private static CrimeManager sInstance;
+
   public interface CrimeCallback {
     void onSuccess(List<Crime> crimes);
     void onFail(Throwable t);
     void onProgressUpdate(int progress);
   }
 
-  public static void getVehicleCrimesDefault(CrimeCallback callback){
+  private CrimeManager() {}
+
+  public static CrimeManager getInstance() {
+    if(sInstance == null) {
+      sInstance = new CrimeManager();
+    }
+
+    return sInstance;
+  }
+
+  public List<Crime> getCrimes(){
+    return mCrimes;
+  }
+
+  public void getVehicleCrimesDefault(CrimeCallback callback){
     getVehicleCrimes(2015, 10, 12, callback);
   }
 
-  public static void getVehicleCrimes(int year, int month, int monthCount, CrimeCallback callback) {
-    Calendar c = Calendar.getInstance();
-    c.set(year, month, 0);
-
-    List<Crime> crimes = new RushSearch().find(Crime.class);
-    if(crimes.size() > 0) {
-      callback.onSuccess(crimes);
+  public void getVehicleCrimes(int year, int month, int monthCount, CrimeCallback callback) {
+    if(mCrimes != null) {
+      callback.onSuccess(mCrimes);
     } else {
-      makeVehicleCrimeRequest(c, 0, monthCount, new ArrayList<Crime>(), callback);
+      Calendar c = Calendar.getInstance();
+      c.set(year, month, 0);
+
+      List<Crime> crimes = new RushSearch().find(Crime.class);
+      if(crimes.size() > 0) {
+        mCrimes = crimes;
+        callback.onSuccess(crimes);
+      } else {
+        makeVehicleCrimeRequest(c, 0, monthCount, new ArrayList<Crime>(), callback);
+      }
     }
   }
 
-  private static void makeVehicleCrimeRequest(final Calendar c, final int currentMonthCount, final int monthCount, final List<Crime> crimes, final CrimeCallback callback) {
+  private void makeVehicleCrimeRequest(final Calendar c, final int currentMonthCount, final int monthCount, final List<Crime> crimes, final CrimeCallback callback) {
     if(currentMonthCount == monthCount) {
+      mCrimes = crimes;
       callback.onSuccess(crimes);
       return;
     }
