@@ -38,6 +38,20 @@
         android:layout_alignBottom="@+id/preview_spaces_available_title"
         android:layout_toEndOf="@+id/preview_spaces_available_title"/>
 
+    <TextView
+        android:id="@+id/view_street_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/street_view"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:layout_below="@id/preview_carpark_name"
+        android:paddingRight="@dimen/default_padding"
+        android:layout_toLeftOf="@+id/preview_safety_circle_background"
+        android:visibility="visible"/>
+
     <RelativeLayout
         android:id="@+id/preview_safety_circle_background"
         android:layout_width="@dimen/safety_circle_side"

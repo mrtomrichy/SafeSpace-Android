@@ -5,6 +5,7 @@ import android.location.Location;
 import android.media.Rating;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,7 +23,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.TileOverlay;
+import com.google.android.gms.maps.model.TileOverlayOptions;
 import com.google.android.gms.maps.model.VisibleRegion;
+import com.google.maps.android.heatmaps.HeatmapTileProvider;
 import com.moopflops.safespace.R;
 import com.moopflops.safespace.engine.CarParkManager;
 import com.moopflops.safespace.engine.CarParkRatingTask;
@@ -53,6 +57,14 @@ public class MapFragment extends Fragment {
     Location mMyLocation;
     LatLng mPinLocation;
 
+    HeatmapTileProvider mProvider;
+    TileOverlay mOverlay;
+
+    private boolean carParkState = true;
+    private boolean heatmapShown = false;
+
+    MapFragmentCallbacks mCallback;
+
     public static MapFragment newInstance() {
         return new MapFragment();
     }
@@ -63,6 +75,12 @@ public class MapFragment extends Fragment {
         setHasOptionsMenu(true);
 
         mSlidyView = (SlidyView) rootView.findViewById(R.id.slidy_view);
+        mSlidyView.setCallback(new SlidyView.SlidyViewCallback() {
+            @Override
+            public void viewStreetView(LatLng position) {
+                mCallback.viewStreetView(position);
+            }
+        });
 
         mMapFragment = new SupportMapFragment();
         mMapFragment.getMapAsync(new OnMapReadyCallback() {
@@ -70,6 +88,7 @@ public class MapFragment extends Fragment {
             public void onMapReady(GoogleMap googleMap) {
                 mGoogleMap = googleMap;
                 mGoogleMap.setMyLocationEnabled(true);
+
                 carParkMapSetup();
             }
         });
@@ -81,13 +100,13 @@ public class MapFragment extends Fragment {
 
     private void showMyLocationData(){
         if(mMyLocation != null){
-            mSlidyView.setMyLocationData(RatingUtils.getRatingForLocation(new com.moopflops.safespace.engine.model.Location(mMyLocation.getLatitude(), mMyLocation.getLongitude()), CrimeManager.getInstance().getCrimes()));
+            mSlidyView.setMyLocationData(RatingUtils.getRatingForLocation(new com.moopflops.safespace.engine.model.Location(mMyLocation.getLatitude(), mMyLocation.getLongitude()), CrimeManager.getInstance().getCrimes()), new LatLng(mMyLocation.getLatitude(), mMyLocation.getLongitude()));
         }
     }
 
     private void showPinData(){
         if(mPinLocation != null){
-            mSlidyView.setPinLocation(RatingUtils.getRatingForLocation(new com.moopflops.safespace.engine.model.Location(mPinLocation.latitude, mPinLocation.longitude), CrimeManager.getInstance().getCrimes()));
+            mSlidyView.setPinLocation(RatingUtils.getRatingForLocation(new com.moopflops.safespace.engine.model.Location(mPinLocation.latitude, mPinLocation.longitude), CrimeManager.getInstance().getCrimes()), mPinLocation);
         }
     }
 
@@ -150,7 +169,7 @@ public class MapFragment extends Fragment {
                 mGoogleMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
                     @Override
                     public void onCameraChange(CameraPosition cameraPosition) {
-
+                        Log.d("zoom", Float.toString(mGoogleMap.getCameraPosition().zoom));
                     }
                 });
             }
@@ -211,7 +230,7 @@ public class MapFragment extends Fragment {
 //                    }
 //                }
 
-//                mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(new LatLngBounds(new LatLng(left, bottom), new LatLng(right, top)), 10));
+///                mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(new LatLngBounds(new LatLng(left, bottom), new LatLng(right, top)), 10));
             }
 
 
@@ -225,11 +244,11 @@ public class MapFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-//        try {
-//            mCallback = (MapCallback) getContext();
-//        } catch (ClassCastException e) {
-//            throw new ClassCastException("Implement MapCallbacks Yo!");
-//        }
+        try {
+            mCallback = (MapFragmentCallbacks) getContext();
+        } catch (ClassCastException e) {
+            throw new ClassCastException("Implement MapCallbacks Yo!");
+        }
     }
 
     public void toggleTraffic() {
@@ -241,7 +260,17 @@ public class MapFragment extends Fragment {
     }
 
     public void heatMap() {
-        //TODO HEAT MAP
+        if(heatmapShown){
+            mOverlay.remove();
+        } else {
+            List<LatLng> data = new ArrayList<>();
+            for (Crime crime : CrimeManager.getInstance().getCrimes()) {
+                data.add(new LatLng(crime.location.latitude, crime.location.longitude));
+            }
+            mProvider = new HeatmapTileProvider.Builder().data(data).build();
+            mOverlay = mGoogleMap.addTileOverlay(new TileOverlayOptions().tileProvider(mProvider));
+        }
+        heatmapShown = !heatmapShown;
     }
 
     public class MapMarker {
@@ -253,12 +282,15 @@ public class MapFragment extends Fragment {
             marker = mGoogleMap.addMarker(new MarkerOptions().position(new LatLng(ratedCarPark.carPark.latitude, ratedCarPark.carPark.longitude))
                     .icon(Utils.getIcon(getContext(), RatingUtils.getColour(getContext(), ratedCarPark.rating), RatingUtils.getRating(ratedCarPark.rating))));
         }
-
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_pin_toggle, menu);
+        if(carParkState) {
+            inflater.inflate(R.menu.menu_pin_toggle, menu);
+        } else{
+            inflater.inflate(R.menu.menu_car_park, menu);
+        }
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -266,29 +298,42 @@ public class MapFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.menu_drop_pin:
-                for(MapMarker mapMarker : mMapMarkers){
-                    mapMarker.marker.remove();
-                }
-                mGoogleMap.clear();
+                mSlidyView.hide();
+                clearPins();
 
                 Toast.makeText(getContext(), "Tap the map to drop a pin", Toast.LENGTH_LONG).show();
 
                 mGoogleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
                     @Override
                     public void onMapClick(LatLng latLng) {
-                        for(MapMarker mapMarker : mMapMarkers){
-                            mapMarker.marker.remove();
-                        }
-                        mGoogleMap.clear();
+                        clearPins();
                         mGoogleMap.addMarker(new MarkerOptions().position(latLng));
                         mPinLocation = latLng;
                         showPinData();
                     }
                 });
-
+                break;
+            case R.id.car_park:
+                clearPins();
+                mSlidyView.hide();
+                setUpCarParks();
                 break;
         }
+        carParkState = !carParkState;
+        getActivity().invalidateOptionsMenu();
         return false;
+    }
+
+    private void clearPins(){
+        for (MapMarker mapMarker : mMapMarkers) {
+            mapMarker.marker.remove();
+        }
+        mGoogleMap.clear();
+    }
+
+
+    public interface MapFragmentCallbacks{
+        void viewStreetView(LatLng position);
     }
 
 }

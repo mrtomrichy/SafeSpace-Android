@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -31,7 +32,7 @@
             android:layout_height="wrap_content"
             android:textColor="@color/white"
             android:textSize="18sp"
-            android:text="Total spaces: 12"
+            tools:text="Total spaces: 12"
             android:layout_marginBottom="@dimen/default_padding"
             android:fontFamily="sans-serif-condensed"/>
 
@@ -41,7 +42,7 @@
             android:layout_height="wrap_content"
             android:textColor="@color/white"
             android:textSize="18sp"
-            android:text="Total crimes: 4562"
+            tools:text="Total crimes: 4562"
             android:fontFamily="sans-serif-condensed"/>
 
     </LinearLayout>

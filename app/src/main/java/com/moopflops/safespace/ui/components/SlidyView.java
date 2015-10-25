@@ -16,6 +16,7 @@ import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.moopflops.safespace.R;
 import com.moopflops.safespace.engine.RatingUtils;
 import com.moopflops.safespace.engine.model.RatedCarPark;
@@ -40,6 +41,7 @@ public class SlidyView extends FrameLayout {
     TextView mAvailableSpaces;
     RelativeLayout mSafetyCircleLayout;
 
+    TextView mViewStreetViewText;
 
     RelativeLayout mPreview;
     TextView mPreviewTitle;
@@ -47,6 +49,8 @@ public class SlidyView extends FrameLayout {
     TextView mPreviewSpacesAvailableTitle;
     TextView mPreviewSafetyRating;
     RelativeLayout mPreviewSaferyCircleLayout;
+
+    SlidyViewCallback mCallback;
 
     enum SwipeDirection {
         UP,
@@ -90,6 +94,7 @@ public class SlidyView extends FrameLayout {
         mPreviewSpaces = (TextView) findViewById(R.id.preview_spaces_available);
         mPreviewSafetyRating = (TextView) findViewById(R.id.preview_safety_rating);
         mPreviewSaferyCircleLayout = (RelativeLayout) findViewById(R.id.preview_safety_circle_background);
+        mViewStreetViewText = (TextView) findViewById(R.id.view_street_view);
 
         getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
@@ -181,15 +186,38 @@ public class SlidyView extends FrameLayout {
         animateTheShitter(getTranslationY(), getHeight() - mPreviewHeight);
     }
 
-    public void setMyLocationData(int rating) {
-        setPreview("Current Location", rating);
+    public void hide() {
+        animateTheShitter(getTranslationY(), getHeight());
     }
 
-    public void setPinLocation(int rating){
+    public void setMyLocationData(int rating, final LatLng location) {
+        setPreview("Current Location", rating);
+        mViewStreetViewText.setVisibility(View.VISIBLE);
+        mViewStreetViewText.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mCallback != null) {
+                    mCallback.viewStreetView(location);
+                }
+            }
+        });
+    }
+
+    public void setPinLocation(int rating, final LatLng location){
         setPreview("Pin Location", rating);
+        mViewStreetViewText.setVisibility(View.VISIBLE);
+        mViewStreetViewText.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mCallback != null) {
+                    mCallback.viewStreetView(location);
+                }
+            }
+        });
     }
 
     public void setPreview(String title, int rating){
+        mViewStreetViewText.setVisibility(View.GONE);
         setEnabled(false);
         mPreviewTitle.setText(title);
         Drawable tintedDrawable = getResources().getDrawable(R.drawable.safety_circle).getConstantState().newDrawable().mutate();
@@ -226,10 +254,19 @@ public class SlidyView extends FrameLayout {
         mSafetyCircleLayout.setBackground(tintedDrawable);
         mPreviewSaferyCircleLayout.setBackground(tintedDrawable);
 
+        mViewStreetViewText.setVisibility(View.GONE);
+
         if(getTranslationY() == getHeight()) {
             animateTheShitter(getTranslationY(), getHeight()-mPreviewHeight);
         }
+    }
 
+    public void setCallback(SlidyViewCallback callback){
+        mCallback = callback;
+    }
+
+    public interface SlidyViewCallback {
+        void viewStreetView(LatLng position);
     }
 
 }

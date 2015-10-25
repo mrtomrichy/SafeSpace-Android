@@ -16,4 +16,6 @@
     <string name="capacity">Capacity</string>
     <string name="safety_rating">Safety Rating</string>
     <string name="drop_pin">Drop Pin</string>
+    <string name="car_parks">Car Parks</string>
+    <string name="street_view">View Street View</string>
 </resources>

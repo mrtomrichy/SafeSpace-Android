@@ -24,8 +24,9 @@ public class Constants {
                                                                                                 DEFAULT_BOTTOM_RIGHT_LONGITUDE,
                                                                                                 DEFAULT_TOP_RIGHT_LATITUDE,
                                                                                                 DEFAULT_TOP_RIGHT_LONGITUDE);
+    public static final String LAT_LONG = "lat_long";
 
-  public static LatLngBounds getDefaultBounds() {
+    public static LatLngBounds getDefaultBounds() {
     return new LatLngBounds(new LatLng(DEFAULT_BOTTOM_LEFT_LATITUDE, DEFAULT_BOTTOM_LEFT_LONGITUDE),
                             new LatLng(DEFAULT_TOP_RIGHT_LATITUDE, DEFAULT_TOP_RIGHT_LONGITUDE));
   }

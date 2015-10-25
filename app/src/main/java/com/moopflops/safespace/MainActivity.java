@@ -8,12 +8,15 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.google.android.gms.maps.model.LatLng;
+import com.moopflops.safespace.engine.Constants;
 import com.moopflops.safespace.ui.Utils;
 import com.moopflops.safespace.ui.activities.FiltersActivity;
+import com.moopflops.safespace.ui.activities.StreetViewActivity;
 import com.moopflops.safespace.ui.fragments.MapFragment;
 import com.moopflops.safespace.ui.fragments.NavigationDrawerFragment;
 
-public class MainActivity extends AppCompatActivity implements NavigationDrawerFragment.NavDrawerCallbacks{
+public class MainActivity extends AppCompatActivity implements NavigationDrawerFragment.NavDrawerCallbacks, MapFragment.MapFragmentCallbacks{
 
     NavigationDrawerFragment mNavDrawerFragment;
     MapFragment mMapFragment;
@@ -80,5 +83,10 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
     @Override
     public void heatMap() {
         mMapFragment.heatMap();
+    }
+
+    @Override
+    public void viewStreetView(LatLng position) {
+        startActivity(new Intent(this, StreetViewActivity.class).putExtra(Constants.LAT_LONG, position));
     }
 }

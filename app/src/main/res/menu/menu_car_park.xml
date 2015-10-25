@@ -2,8 +2,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/menu_drop_pin"
-        android:title="@string/drop_pin"
-        android:icon="@drawable/ic_pin_drop_white_24dp"
+        android:id="@+id/car_park"
+        android:title="@string/car_parks"
+        android:icon="@drawable/ic_local_parking_white_24dp"
         app:showAsAction="always"/>
 </menu>
