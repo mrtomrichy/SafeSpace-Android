@@ -32,7 +32,8 @@
             android:textColor="@color/white"
             android:textSize="18sp"
             android:text="Total spaces: 12"
-            android:layout_marginBottom="@dimen/default_padding"/>
+            android:layout_marginBottom="@dimen/default_padding"
+            android:fontFamily="sans-serif-condensed"/>
 
         <TextView
             android:id="@+id/total_crimes"
@@ -40,7 +41,8 @@
             android:layout_height="wrap_content"
             android:textColor="@color/white"
             android:textSize="18sp"
-            android:text="Total crimes: 4562"/>
+            android:text="Total crimes: 4562"
+            android:fontFamily="sans-serif-condensed"/>
 
     </LinearLayout>
 
