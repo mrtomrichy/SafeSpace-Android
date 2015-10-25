@@ -215,7 +215,7 @@ public class SlidyView extends FrameLayout {
         mPreviewSaferyCircleLayout.setBackground(tintedDrawable);
 
         if(getTranslationY() == getHeight()) {
-            animateTheFucker(getTranslationY(), getHeight()-mPreviewHeight);
+            animateTheShitter(getTranslationY(), getHeight()-mPreviewHeight);
         }
 
     }
