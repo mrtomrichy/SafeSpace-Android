@@ -90,7 +90,7 @@ public class SlidyView extends FrameLayout {
         getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                setTranslationY(getHeight() - mPreviewHeight);
+                setTranslationY(getHeight());
                 mExpanded.setAlpha(0.0f);
                 getViewTreeObserver().removeOnGlobalLayoutListener(this);
             }
@@ -181,6 +181,10 @@ public class SlidyView extends FrameLayout {
 
         mSafetyCircleLayout.setBackground(tintedDrawable);
         mPreviewSaferyCircleLayout.setBackground(tintedDrawable);
+
+        if(getTranslationY() == getHeight()) {
+            animateTheFucker(getTranslationY(), getHeight()-mPreviewHeight);
+        }
 
     }
 
