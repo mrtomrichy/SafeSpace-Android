@@ -1,5 +1,6 @@
 package com.moopflops.safespace.ui.components;
 
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
@@ -11,9 +12,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.animation.DecelerateInterpolator;
-import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -31,12 +30,20 @@ public class SlidyView extends FrameLayout {
     private float initialY;
     private float initialTranslation;
 
+    RelativeLayout mExpanded;
     TextView mTitle;
     TextView mCapacity;
     TextView mPredictedSpaces;
     TextView mSafetyRating;
     TextView mAvailableSpaces;
     RelativeLayout mSafetyCircleLayout;
+
+
+    RelativeLayout mPreview;
+    TextView mPreviewTitle;
+    TextView mPreviewSpaces;
+    TextView mPreviewSafetyRating;
+    RelativeLayout mPreviewSaferyCircleLayout;
 
     enum SwipeDirection {
         UP,
@@ -65,6 +72,9 @@ public class SlidyView extends FrameLayout {
 
         mPreviewHeight = getResources().getDimension(R.dimen.preview_height);
 
+        mExpanded = (RelativeLayout) findViewById(R.id.expanded_layout);
+        mPreview = (RelativeLayout) findViewById(R.id.preview_layout);
+
         mTitle = (TextView) findViewById(R.id.carpark_name);
         mCapacity = (TextView) findViewById(R.id.capacity);
         mPredictedSpaces = (TextView) findViewById(R.id.predicted_spaces);
@@ -72,10 +82,16 @@ public class SlidyView extends FrameLayout {
         mAvailableSpaces = (TextView) findViewById(R.id.spaces_available);
         mSafetyCircleLayout = (RelativeLayout) findViewById(R.id.safety_circle_background);
 
+        mPreviewTitle = (TextView) findViewById(R.id.preview_carpark_name);
+        mPreviewSpaces = (TextView) findViewById(R.id.preview_spaces_available);
+        mPreviewSafetyRating = (TextView) findViewById(R.id.preview_safety_rating);
+        mPreviewSaferyCircleLayout = (RelativeLayout) findViewById(R.id.preview_safety_circle_background);
+
         getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
                 setTranslationY(getHeight() - mPreviewHeight);
+                mExpanded.setAlpha(0.0f);
                 getViewTreeObserver().removeOnGlobalLayoutListener(this);
             }
         });
@@ -92,9 +108,9 @@ public class SlidyView extends FrameLayout {
                         break;
                     case MotionEvent.ACTION_UP:
                         if (lastDirection == SwipeDirection.DOWN) {
-                            animate().translationY(getHeight() - mPreviewHeight).setInterpolator(new DecelerateInterpolator()).setDuration(DURATION).start();
+                            animateTheFucker(getTranslationY(), getHeight() - mPreviewHeight);
                         } else {
-                            animate().translationY(0).setInterpolator(new DecelerateInterpolator()).setDuration(DURATION).start();
+                            animateTheFucker(getTranslationY(), 0);
                         }
                         break;
                     case MotionEvent.ACTION_POINTER_DOWN:
@@ -112,6 +128,23 @@ public class SlidyView extends FrameLayout {
                 return true;
             }
         });
+    }
+
+    @Override
+    public void setTranslationY(float translationY) {
+        super.setTranslationY(translationY);
+
+        double showFactor = (translationY / (getHeight() - mPreviewHeight));
+
+        mPreview.setAlpha((float)showFactor);
+        mExpanded.setAlpha(1f - (float)showFactor);
+    }
+
+    private void animateTheFucker(float start, float end) {
+        ObjectAnimator animator = ObjectAnimator.ofFloat(this, View.TRANSLATION_Y, start, end);
+        animator.setInterpolator(new DecelerateInterpolator());
+        animator.setDuration(200);
+        animator.start();
     }
 
     @Override
@@ -138,10 +171,17 @@ public class SlidyView extends FrameLayout {
         mPredictedSpaces.setText(String.valueOf(ratedCarPark.carPark.spaces30));
         mSafetyRating.setText(ratedCarPark.getRating());
 
+        mPreviewTitle.setText(ratedCarPark.carPark.name);
+        mPreviewSpaces.setText(String.valueOf(ratedCarPark.carPark.spacesNow));
+        mPreviewSafetyRating.setText(ratedCarPark.getRating());
+
+
         Drawable tintedDrawable = getResources().getDrawable(R.drawable.safety_circle).getConstantState().newDrawable().mutate();
         tintedDrawable.setColorFilter(new PorterDuffColorFilter(ratedCarPark.getColour(getContext()), PorterDuff.Mode.MULTIPLY));
 
         mSafetyCircleLayout.setBackground(tintedDrawable);
+        mPreviewSaferyCircleLayout.setBackground(tintedDrawable);
+
     }
 
 }

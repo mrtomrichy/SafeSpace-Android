@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/expanded_layout"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="@dimen/medium_padding"
-    android:background="@color/white">
+    android:background="@color/white" >
 
     <TextView
         android:id="@+id/carpark_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         tools:text="Arndale St."
-        android:textSize="32sp"/>
+        android:textSize="32sp"
+        android:fontFamily="sans-serif-condensed"/>
 
     <TextView
         android:id="@+id/spaces_available_title"
@@ -21,7 +23,8 @@
         android:layout_below="@+id/carpark_name"
         android:text="@string/spaces_available"
         android:layout_marginTop="@dimen/medium_padding"
-        android:textSize="18sp"/>
+        android:textSize="18sp"
+        android:fontFamily="sans-serif-light"/>
 
     <TextView
         android:id="@+id/spaces_available"
@@ -42,7 +45,8 @@
         android:layout_below="@+id/spaces_available_title"
         android:text="@string/total_spaces_available"
         android:layout_marginTop="@dimen/medium_padding"
-        android:textSize="18sp"/>
+        android:textSize="18sp"
+        android:fontFamily="sans-serif-light"/>
 
 
     <TextView
@@ -64,7 +68,8 @@
         android:layout_below="@+id/predicted_spaces_title"
         android:text="@string/capacity"
         android:layout_marginTop="@dimen/medium_padding"
-        android:textSize="18sp"/>
+        android:textSize="18sp"
+        android:fontFamily="sans-serif-light"/>
 
     <TextView
         android:id="@+id/capacity"
@@ -105,7 +110,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/safety_rating"/>
+            android:text="@string/safety_rating"
+            android:fontFamily="sans-serif-light"/>
 
     </LinearLayout>
 

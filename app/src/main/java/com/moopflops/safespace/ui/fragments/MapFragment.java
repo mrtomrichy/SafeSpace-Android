@@ -63,8 +63,8 @@ public class MapFragment extends Fragment {
                     @Override
                     public boolean onMarkerClick(Marker marker) {
 
-                        for(MapMarker mapMarker : mMapMarkers){
-                            if(mapMarker.marker.equals(marker)){
+                        for (MapMarker mapMarker : mMapMarkers) {
+                            if (mapMarker.marker.equals(marker)) {
                                 mSlidyView.setData(mapMarker.ratedCarPark);
                                 return false;
                             }
