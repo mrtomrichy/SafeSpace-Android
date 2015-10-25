@@ -10,5 +10,8 @@
     <dimen name="map_pin_width">36dip</dimen>
     <dimen name="map_pin_height">54dip</dimen>
     <dimen name="map_pin_margin">10dip</dimen>
+    <dimen name="medium_padding">16dip</dimen>
+    <dimen name="safety_circle_side">64dip</dimen>
+    <dimen name="safety_circle_padding">2dip</dimen>
 
 </resources>

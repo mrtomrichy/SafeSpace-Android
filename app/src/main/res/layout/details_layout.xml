@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/medium_padding">
+
+    <TextView
+        android:id="@+id/carpark_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="Arndale St."
+        android:textSize="32sp"/>
+
+    <TextView
+        android:id="@+id/spaces_available_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/carpark_name"
+        android:text="@string/spaces_available"
+        android:layout_marginTop="@dimen/medium_padding"
+        android:textSize="18sp"/>
+
+    <TextView
+        android:id="@+id/spaces_available"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/carpark_name"
+        tools:text="123"
+        android:layout_marginTop="@dimen/medium_padding"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_toRightOf="@id/spaces_available_title"
+        android:layout_marginLeft="16dip"/>
+
+    <TextView
+        android:id="@+id/predicted_spaces_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/spaces_available_title"
+        android:text="@string/total_spaces_available"
+        android:layout_marginTop="@dimen/medium_padding"
+        android:textSize="18sp"/>
+
+
+    <TextView
+        android:id="@+id/predicted_spaces"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/spaces_available"
+        tools:text="201"
+        android:layout_marginTop="@dimen/medium_padding"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_toRightOf="@id/predicted_spaces_title"
+        android:layout_marginLeft="16dip"/>
+
+    <TextView
+        android:id="@+id/capacity_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/predicted_spaces_title"
+        android:text="@string/capacity"
+        android:layout_marginTop="@dimen/medium_padding"
+        android:textSize="18sp"/>
+
+    <TextView
+        android:id="@+id/capacity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/predicted_spaces_title"
+        tools:text="201"
+        android:layout_marginTop="@dimen/medium_padding"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_toRightOf="@id/capacity_title"
+        android:layout_marginLeft="16dip"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/capacity"
+        android:gravity="center_vertical">
+
+        <RelativeLayout
+            android:id="@+id/safety_circle_background"
+            android:layout_width="@dimen/safety_circle_side"
+            android:layout_height="@dimen/safety_circle_side"
+            android:layout_margin="@dimen/medium_padding"
+            tools:background="@drawable/safety_circle">
+
+            <TextView
+                android:id="@+id/safety_rating"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="A+"
+                android:layout_centerInParent="true"/>
+
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/safety_rating"/>
+
+    </LinearLayout>
+
+
+
+
+</RelativeLayout>

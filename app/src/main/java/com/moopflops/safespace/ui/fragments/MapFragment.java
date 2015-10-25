@@ -53,6 +53,7 @@ public class MapFragment extends Fragment {
             @Override
             public void onMapReady(GoogleMap googleMap) {
                 mGoogleMap = googleMap;
+                mGoogleMap.setMyLocationEnabled(true);
                 setUpMap();
             }
         });

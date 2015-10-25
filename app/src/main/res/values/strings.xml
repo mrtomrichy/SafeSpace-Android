@@ -11,4 +11,8 @@
     <string name="close">CLose</string>
     <string name="open">Open</string>
     <string name="heat_map">Heat Map</string>
+    <string name="spaces_available">Spaces Available</string>
+    <string name="total_spaces_available">Predicted Spaces (30 mins)</string>
+    <string name="capacity">Capacity</string>
+    <string name="safety_rating">Safety Rating</string>
 </resources>
