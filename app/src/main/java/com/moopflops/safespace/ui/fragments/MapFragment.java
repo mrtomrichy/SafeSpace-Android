@@ -16,6 +16,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.VisibleRegion;
 import com.moopflops.safespace.R;
 import com.moopflops.safespace.engine.CarParkManager;
 import com.moopflops.safespace.engine.CarParkRatingTask;
@@ -66,7 +67,12 @@ public class MapFragment extends Fragment {
                         for (MapMarker mapMarker : mMapMarkers) {
                             if (mapMarker.marker.equals(marker)) {
                                 mSlidyView.setData(mapMarker.ratedCarPark);
-                                return false;
+                                VisibleRegion visibleRegion = mGoogleMap.getProjection().getVisibleRegion();
+                                int viewHeight = mMapFragment.getView().getMeasuredHeight();
+                                double latSpan = visibleRegion.latLngBounds.northeast.latitude - visibleRegion.latLngBounds.southwest.latitude;
+                                double latOffset = (latSpan * 0.5) * (1 - (viewHeight - mSlidyView.getVisibleHeight() / viewHeight));
+                                mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(CameraPosition.fromLatLngZoom(new LatLng(mapMarker.ratedCarPark.carPark.latitude - latOffset, mapMarker.ratedCarPark.carPark.longitude), mGoogleMap.getCameraPosition().zoom)));
+                                return true;
                             }
                         }
                         return false;

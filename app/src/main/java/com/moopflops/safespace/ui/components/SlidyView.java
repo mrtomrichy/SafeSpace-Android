@@ -161,6 +161,10 @@ public class SlidyView extends FrameLayout {
         return getTranslationY() == 0;
     }
 
+    public float getVisibleHeight(){
+        return isOpen() ? getHeight() : mPreviewHeight;
+    }
+
     public void setData(RatedCarPark ratedCarPark){
         setFocusable(true);
         setFocusableInTouchMode(true);
