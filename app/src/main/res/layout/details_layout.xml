@@ -4,7 +4,8 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="@dimen/medium_padding">
+    android:padding="@dimen/medium_padding"
+    android:background="@color/white">
 
     <TextView
         android:id="@+id/carpark_name"
@@ -91,11 +92,13 @@
             tools:background="@drawable/safety_circle">
 
             <TextView
+                style="@style/MapPinText"
                 android:id="@+id/safety_rating"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 tools:text="A+"
-                android:layout_centerInParent="true"/>
+                android:layout_centerInParent="true"
+                android:textSize="24sp"/>
 
         </RelativeLayout>
 

@@ -14,6 +14,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.moopflops.safespace.R;
 import com.moopflops.safespace.engine.CarParkManager;
@@ -24,6 +25,7 @@ import com.moopflops.safespace.engine.model.CarPark;
 import com.moopflops.safespace.engine.model.Crime;
 import com.moopflops.safespace.engine.model.RatedCarPark;
 import com.moopflops.safespace.ui.Utils;
+import com.moopflops.safespace.ui.components.SlidyView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,8 +37,10 @@ public class MapFragment extends Fragment {
 
     SupportMapFragment mMapFragment;
     GoogleMap mGoogleMap;
+    SlidyView mSlidyView;
 
     List<RatedCarPark> mRatedCarParks = new ArrayList<>();
+    List<MapMarker> mMapMarkers = new ArrayList<>();
 
     public static MapFragment newInstance() {
         return new MapFragment();
@@ -46,12 +50,28 @@ public class MapFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_map, container, false);
 
+        mSlidyView = (SlidyView) rootView.findViewById(R.id.slidy_view);
+
         mMapFragment = new SupportMapFragment();
         mMapFragment.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(GoogleMap googleMap) {
                 mGoogleMap = googleMap;
                 mGoogleMap.setMyLocationEnabled(true);
+
+                mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                    @Override
+                    public boolean onMarkerClick(Marker marker) {
+
+                        for(MapMarker mapMarker : mMapMarkers){
+                            if(mapMarker.marker.equals(marker)){
+                                mSlidyView.setData(mapMarker.ratedCarPark);
+                                return false;
+                            }
+                        }
+                        return false;
+                    }
+                });
                 setUpMap();
             }
         });
@@ -63,9 +83,9 @@ public class MapFragment extends Fragment {
 
 
     private void addMapPins(){
+        mMapMarkers.clear();
         for(RatedCarPark ratedCarPark : mRatedCarParks){
-            mGoogleMap.addMarker(new MarkerOptions().position(new LatLng(ratedCarPark.carPark.latitude, ratedCarPark.carPark.longitude)))
-                    .setIcon(Utils.getIcon(getContext(), ratedCarPark.getColour(getContext()), ratedCarPark.getRating()));
+            mMapMarkers.add(new MapMarker(ratedCarPark));
         }
     }
 
@@ -176,4 +196,17 @@ public class MapFragment extends Fragment {
     public void heatMap() {
         //TODO HEAT MAP
     }
+
+    public class MapMarker {
+        public Marker marker;
+        public RatedCarPark ratedCarPark;
+
+        public MapMarker(RatedCarPark carPark){
+            ratedCarPark = carPark;
+            marker = mGoogleMap.addMarker(new MarkerOptions().position(new LatLng(ratedCarPark.carPark.latitude, ratedCarPark.carPark.longitude))
+                    .icon(Utils.getIcon(getContext(), ratedCarPark.getColour(getContext()), ratedCarPark.getRating())));
+        }
+
+    }
+
 }
