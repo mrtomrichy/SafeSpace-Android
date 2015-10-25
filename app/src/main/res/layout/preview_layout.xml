@@ -10,11 +10,12 @@
 
     <TextView
         android:id="@+id/preview_carpark_name"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         tools:text="Arndale St."
         android:textSize="32sp"
-        android:fontFamily="sans-serif-condensed"/>
+        android:fontFamily="sans-serif-condensed"
+        android:layout_toLeftOf="@+id/preview_safety_circle_background"/>
 
     <TextView
         android:id="@+id/preview_spaces_available_title"
@@ -50,7 +51,7 @@
         android:layout_below="@id/preview_carpark_name"
         android:paddingRight="@dimen/default_padding"
         android:layout_toLeftOf="@+id/preview_safety_circle_background"
-        android:visibility="visible"/>
+        android:visibility="gone"/>
 
     <RelativeLayout
         android:id="@+id/preview_safety_circle_background"

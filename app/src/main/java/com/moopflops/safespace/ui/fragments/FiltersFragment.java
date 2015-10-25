@@ -2,23 +2,27 @@ package com.moopflops.safespace.ui.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.moopflops.safespace.R;
-import com.moopflops.safespace.ui.Utils;
-import com.moopflops.safespace.ui.components.CarParkMapPin;
+import com.moopflops.safespace.engine.CarParkManager;
+import com.moopflops.safespace.engine.CarParkRatingTask;
+import com.moopflops.safespace.engine.model.CarPark;
+import com.moopflops.safespace.engine.model.RatedCarPark;
+import com.moopflops.safespace.ui.adapters.CarParkAdapter;
+
+import java.util.List;
 
 /**
  * Created by patrickc on 24/10/15.
  */
 public class FiltersFragment extends Fragment {
 
+    private CarParkAdapter mAdapter;
 
     public static FiltersFragment newInstance() {
         return new FiltersFragment();
@@ -28,15 +32,36 @@ public class FiltersFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_filters, container, false);
 
-        LinearLayout test = (LinearLayout) rootView.findViewById(R.id.test);
+        final RecyclerView mRecyclerView = (RecyclerView) rootView.findViewById(R.id.car_park_list);
+        mRecyclerView.setHasFixedSize(true);
 
-//        test.addView(new CarParkMapPin(getContext(), Utils.getCrimeColour(getContext(), 100), 100), new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-//        test.addView(new CarParkMapPin(getContext(), Utils.getCrimeColour(getContext(), 0), 20), new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-//        test.addView(new CarParkMapPin(getContext(), Utils.getCrimeColour(getContext(), 10), 1), new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-//        test.addView(new CarParkMapPin(getContext(), Utils.getCrimeColour(getContext(), 20), 1), new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-//        test.addView(new CarParkMapPin(getContext(), Utils.getCrimeColour(getContext(), 30), 1), new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-//        test.addView(new CarParkMapPin(getContext(), Utils.getCrimeColour(getContext(), 40), 1), new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-//        test.addView(new CarParkMapPin(getContext(), Utils.getCrimeColour(getContext(), 50), 1), new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
+        mRecyclerView.setLayoutManager(mLayoutManager);
+
+        CarParkManager.getInstance().getCarParks(new CarParkManager.CarParkCallbacks() {
+            @Override
+            public void onSuccess(List<CarPark> carParks) {
+                CarParkRatingTask task = new CarParkRatingTask(new CarParkRatingTask.CarParkRatingListener() {
+                    @Override
+                    public void onComplete(List<RatedCarPark> ratedCarParks) {
+                        mAdapter = new CarParkAdapter(ratedCarParks);
+                        mRecyclerView.setAdapter(mAdapter);
+                    }
+                });
+
+                CarPark[] cpArray = new CarPark[carParks.size()];
+                carParks.toArray(cpArray);
+
+                task.execute(cpArray);
+            }
+
+            @Override
+            public void onFail(Throwable t) {
+
+            }
+        });
+
+
 
         return rootView;
     }

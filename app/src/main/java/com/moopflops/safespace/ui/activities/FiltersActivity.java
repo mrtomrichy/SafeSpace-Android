@@ -2,6 +2,8 @@ package com.moopflops.safespace.ui.activities;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.View;
 
 import com.moopflops.safespace.R;
 import com.moopflops.safespace.ui.Utils;
@@ -17,8 +19,18 @@ public class FiltersActivity  extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.filters_activity);
 
+        Toolbar tool = (Toolbar) findViewById(R.id.toolbar);
+
+        setSupportActionBar(tool);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        tool.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
+
+
         Utils.addFragment(this, FiltersFragment.newInstance());
-
-
     }
 }
