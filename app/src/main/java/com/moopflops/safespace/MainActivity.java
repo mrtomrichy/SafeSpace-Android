@@ -5,21 +5,13 @@ import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.moopflops.safespace.engine.CarParkManager;
-import com.moopflops.safespace.engine.CrimeManager;
-import com.moopflops.safespace.engine.RatingUtils;
-import com.moopflops.safespace.engine.model.CarPark;
-import com.moopflops.safespace.engine.model.Crime;
 import com.moopflops.safespace.ui.Utils;
 import com.moopflops.safespace.ui.activities.FiltersActivity;
 import com.moopflops.safespace.ui.fragments.MapFragment;
 import com.moopflops.safespace.ui.fragments.NavigationDrawerFragment;
-
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements NavigationDrawerFragment.NavDrawerCallbacks{
 

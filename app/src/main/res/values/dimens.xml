@@ -10,5 +10,6 @@
     <dimen name="map_pin_width">36dip</dimen>
     <dimen name="map_pin_height">54dip</dimen>
     <dimen name="map_pin_margin">10dip</dimen>
+    <dimen name="preview_height">120dp</dimen>
 
 </resources>
