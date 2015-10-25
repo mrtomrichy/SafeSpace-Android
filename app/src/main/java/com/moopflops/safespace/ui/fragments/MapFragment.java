@@ -2,7 +2,6 @@ package com.moopflops.safespace.ui.fragments;
 
 import android.content.Context;
 import android.location.Location;
-import android.media.Rating;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -150,7 +149,7 @@ public class MapFragment extends Fragment {
             }
         });
         mGoogleMap.setPadding(32, 32, 32, 32);
-        setMapBounds(Constants.getDefaultBounds());
+        setMapBounds(Constants.getDefaultMapZoom());
         getCrimes();
     }
 
@@ -210,27 +209,6 @@ public class MapFragment extends Fragment {
                 carParks.toArray(carParkArray);
 
                 task.execute(carParkArray);
-                //double left = Double.MAX_VALUE, right = -Double.MAX_VALUE, top = Double.MAX_VALUE, bottom = -Double.MAX_VALUE;
-//                for (CarPark carPark : carParks) {
-
-//                    if (carPark.latitude < left) {
-//                        left = carPark.latitude;
-//                    }
-//
-//                    if (carPark.latitude > right) {
-//                        right = carPark.latitude;
-//                    }
-//
-//                    if (carPark.longitude > bottom) {
-//                        bottom = carPark.longitude;
-//                    }
-//
-//                    if (carPark.longitude < top) {
-//                        top = carPark.longitude;
-//                    }
-//                }
-
-///                mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(new LatLngBounds(new LatLng(left, bottom), new LatLng(right, top)), 10));
             }
 
 
