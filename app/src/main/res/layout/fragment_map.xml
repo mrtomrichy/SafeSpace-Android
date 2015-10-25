@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
@@ -8,18 +8,20 @@
     <FrameLayout
         android:id="@+id/map_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        />
 
-    <!--<android.support.percent.PercentFrameLayout-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent">-->
+    <android.support.percent.PercentRelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-        <!--<com.moopflops.safespace.ui.components.SlidyView-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent"-->
-            <!--app:layout_heightPercent="50%"/>-->
+        <com.moopflops.safespace.ui.components.SlidyView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_heightPercent="70%"
+            android:layout_alignParentBottom="true"
+            android:clickable="true" />
 
+    </android.support.percent.PercentRelativeLayout>
 
-
-    <!--</android.support.percent.PercentFrameLayout>-->
-</LinearLayout>
+</RelativeLayout>

@@ -13,5 +13,6 @@
     <dimen name="medium_padding">16dip</dimen>
     <dimen name="safety_circle_side">64dip</dimen>
     <dimen name="safety_circle_padding">2dip</dimen>
+    <dimen name="preview_height">120dp</dimen>
 
 </resources>
