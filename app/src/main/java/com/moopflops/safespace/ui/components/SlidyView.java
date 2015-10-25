@@ -182,8 +182,16 @@ public class SlidyView extends FrameLayout {
     }
 
     public void setMyLocationData(int rating) {
+        setPreview("Current Location", rating);
+    }
+
+    public void setPinLocation(int rating){
+        setPreview("Pin Location", rating);
+    }
+
+    public void setPreview(String title, int rating){
         setEnabled(false);
-        mPreviewTitle.setText("My Location");
+        mPreviewTitle.setText(title);
         Drawable tintedDrawable = getResources().getDrawable(R.drawable.safety_circle).getConstantState().newDrawable().mutate();
         tintedDrawable.setColorFilter(new PorterDuffColorFilter(RatingUtils.getColour(getContext(), rating), PorterDuff.Mode.MULTIPLY));
 

@@ -6,8 +6,12 @@ import android.media.Rating;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -47,6 +51,7 @@ public class MapFragment extends Fragment {
     List<MapMarker> mMapMarkers = new ArrayList<>();
 
     Location mMyLocation;
+    LatLng mPinLocation;
 
     public static MapFragment newInstance() {
         return new MapFragment();
@@ -55,6 +60,7 @@ public class MapFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_map, container, false);
+        setHasOptionsMenu(true);
 
         mSlidyView = (SlidyView) rootView.findViewById(R.id.slidy_view);
 
@@ -64,45 +70,7 @@ public class MapFragment extends Fragment {
             public void onMapReady(GoogleMap googleMap) {
                 mGoogleMap = googleMap;
                 mGoogleMap.setMyLocationEnabled(true);
-                mMyLocation = mGoogleMap.getMyLocation();
-                showMyLocationData();
-                mGoogleMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
-                    @Override
-                    public boolean onMyLocationButtonClick() {
-                        mMyLocation = mGoogleMap.getMyLocation();
-                        showMyLocationData();
-                        return false;
-                    }
-                });
-
-                mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-                    @Override
-                    public boolean onMarkerClick(Marker marker) {
-                        for (MapMarker mapMarker : mMapMarkers) {
-                            if (mapMarker.marker.equals(marker)) {
-                                mSlidyView.setEnabled(true);
-                                mSlidyView.setData(mapMarker.ratedCarPark);
-                                VisibleRegion visibleRegion = mGoogleMap.getProjection().getVisibleRegion();
-                                int viewHeight = mMapFragment.getView().getMeasuredHeight();
-                                double latSpan = visibleRegion.latLngBounds.northeast.latitude - visibleRegion.latLngBounds.southwest.latitude;
-                                double latOffset = (latSpan * 0.5) * (1 - (viewHeight - mSlidyView.getVisibleHeight()) / viewHeight);
-                                mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(CameraPosition.fromLatLngZoom(new LatLng(mapMarker.ratedCarPark.carPark.latitude - latOffset, mapMarker.ratedCarPark.carPark.longitude), mGoogleMap.getCameraPosition().zoom)));
-                                return true;
-                            }
-                        }
-                        return false;
-                    }
-                });
-
-                mGoogleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-                    @Override
-                    public void onMapClick(LatLng latLng) {
-                        if(mSlidyView.isOpen()){
-                            mSlidyView.close();
-                        }
-                    }
-                });
-                setUpMap();
+                carParkMapSetup();
             }
         });
 
@@ -117,18 +85,61 @@ public class MapFragment extends Fragment {
         }
     }
 
+    private void showPinData(){
+        if(mPinLocation != null){
+            mSlidyView.setPinLocation(RatingUtils.getRatingForLocation(new com.moopflops.safespace.engine.model.Location(mPinLocation.latitude, mPinLocation.longitude), CrimeManager.getInstance().getCrimes()));
+        }
+    }
+
+    private void carParkMapSetup(){
+        mMyLocation = mGoogleMap.getMyLocation();
+        showMyLocationData();
+        mGoogleMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
+            @Override
+            public boolean onMyLocationButtonClick() {
+                mMyLocation = mGoogleMap.getMyLocation();
+                showMyLocationData();
+                return false;
+            }
+        });
+
+        mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                for (MapMarker mapMarker : mMapMarkers) {
+                    if (mapMarker.marker.equals(marker)) {
+                        mSlidyView.setEnabled(true);
+                        mSlidyView.setData(mapMarker.ratedCarPark);
+                        VisibleRegion visibleRegion = mGoogleMap.getProjection().getVisibleRegion();
+                        int viewHeight = mMapFragment.getView().getMeasuredHeight();
+                        double latSpan = visibleRegion.latLngBounds.northeast.latitude - visibleRegion.latLngBounds.southwest.latitude;
+                        double latOffset = (latSpan * 0.5) * (1 - (viewHeight - mSlidyView.getVisibleHeight()) / viewHeight);
+                        mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(CameraPosition.fromLatLngZoom(new LatLng(mapMarker.ratedCarPark.carPark.latitude - latOffset, mapMarker.ratedCarPark.carPark.longitude), mGoogleMap.getCameraPosition().zoom)));
+                        return true;
+                    }
+                }
+                return false;
+            }
+        });
+
+        mGoogleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+                if (mSlidyView.isOpen()) {
+                    mSlidyView.close();
+                }
+            }
+        });
+        mGoogleMap.setPadding(32, 32, 32, 32);
+        setMapBounds(Constants.getDefaultBounds());
+        getCrimes();
+    }
 
     private void addMapPins(){
         mMapMarkers.clear();
         for(RatedCarPark ratedCarPark : mRatedCarParks){
             mMapMarkers.add(new MapMarker(ratedCarPark));
         }
-    }
-
-    private void setUpMap(){
-        mGoogleMap.setPadding(32, 32, 32, 32);
-        setMapBounds(Constants.getDefaultBounds());
-        getCrimes();
     }
 
     private void setMapBounds(final LatLngBounds bounds){
@@ -243,6 +254,41 @@ public class MapFragment extends Fragment {
                     .icon(Utils.getIcon(getContext(), RatingUtils.getColour(getContext(), ratedCarPark.rating), RatingUtils.getRating(ratedCarPark.rating))));
         }
 
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_pin_toggle, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.menu_drop_pin:
+                for(MapMarker mapMarker : mMapMarkers){
+                    mapMarker.marker.remove();
+                }
+                mGoogleMap.clear();
+
+                Toast.makeText(getContext(), "Tap the map to drop a pin", Toast.LENGTH_LONG).show();
+
+                mGoogleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+                    @Override
+                    public void onMapClick(LatLng latLng) {
+                        for(MapMarker mapMarker : mMapMarkers){
+                            mapMarker.marker.remove();
+                        }
+                        mGoogleMap.clear();
+                        mGoogleMap.addMarker(new MarkerOptions().position(latLng));
+                        mPinLocation = latLng;
+                        showPinData();
+                    }
+                });
+
+                break;
+        }
+        return false;
     }
 
 }

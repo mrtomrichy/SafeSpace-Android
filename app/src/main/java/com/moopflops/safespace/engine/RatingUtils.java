@@ -59,12 +59,18 @@ public class RatingUtils {
   }
 
   public static int getColour(Context context, int rating){
-    if(rating > 80){
+    if(rating > 90){
       return context.getResources().getColor(R.color.goodGreen);
-    } else if (rating > 60){
+    } else if (rating > 80){
+      return context.getResources().getColor(R.color.greenYellow);
+    } else if (rating > 70){
       return context.getResources().getColor(R.color.yellow);
-    } else if (rating > 40){
+    } else if (rating > 60){
+      return context.getResources().getColor(R.color.yellowOrange);
+    } else if (rating > 50){
       return context.getResources().getColor(R.color.orange);
+    } else if (rating > 40){
+      return context.getResources().getColor(R.color.redOrange);
     } else {
       return context.getResources().getColor(R.color.red);
     }

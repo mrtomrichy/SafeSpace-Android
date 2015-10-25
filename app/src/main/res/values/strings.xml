@@ -15,4 +15,5 @@
     <string name="total_spaces_available">Predicted Spaces (30 mins)</string>
     <string name="capacity">Capacity</string>
     <string name="safety_rating">Safety Rating</string>
+    <string name="drop_pin">Drop Pin</string>
 </resources>
