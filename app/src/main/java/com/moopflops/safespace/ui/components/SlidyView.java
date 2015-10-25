@@ -94,7 +94,7 @@ public class SlidyView extends FrameLayout {
         getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                setTranslationY(getHeight() - mPreviewHeight);
+                setTranslationY(getHeight());
                 mExpanded.setAlpha(0.0f);
                 getViewTreeObserver().removeOnGlobalLayoutListener(this);
             }
@@ -103,6 +103,8 @@ public class SlidyView extends FrameLayout {
         setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
+                if(!mEnabled) return true;
+
                 final int Y = (int) motionEvent.getRawY();
 
                 switch (motionEvent.getAction() & MotionEvent.ACTION_MASK) {
@@ -147,12 +149,10 @@ public class SlidyView extends FrameLayout {
     }
 
     private void animateTheShitter(float start, float end) {
-        if(mEnabled) {
-            ObjectAnimator animator = ObjectAnimator.ofFloat(this, View.TRANSLATION_Y, start, end);
-            animator.setInterpolator(new DecelerateInterpolator());
-            animator.setDuration(200);
-            animator.start();
-        }
+        ObjectAnimator animator = ObjectAnimator.ofFloat(this, View.TRANSLATION_Y, start, end);
+        animator.setInterpolator(new DecelerateInterpolator());
+        animator.setDuration(200);
+        animator.start();
     }
 
     @Override
@@ -199,9 +199,13 @@ public class SlidyView extends FrameLayout {
         mPreviewSafetyRating.setText(RatingUtils.getRating(rating));
         mPreviewSpaces.setText("");
         mPreviewSpacesAvailableTitle.setVisibility(View.GONE);
+
+        if(getTranslationY() == getHeight()) {
+            animateTheShitter(getTranslationY(), getHeight()-mPreviewHeight);
+        }
     }
 
-    public void setData(RatedCarPark ratedCarPark){
+    public void setData(RatedCarPark ratedCarPark) {
         setFocusable(true);
         setFocusableInTouchMode(true);
         requestFocus();
@@ -221,6 +225,10 @@ public class SlidyView extends FrameLayout {
 
         mSafetyCircleLayout.setBackground(tintedDrawable);
         mPreviewSaferyCircleLayout.setBackground(tintedDrawable);
+
+        if(getTranslationY() == getHeight()) {
+            animateTheShitter(getTranslationY(), getHeight()-mPreviewHeight);
+        }
 
     }
 
