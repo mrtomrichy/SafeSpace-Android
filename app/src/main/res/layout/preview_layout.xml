@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/preview_layout"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="@dimen/medium_padding"
+                android:background="@color/white">
+
+    <TextView
+        android:id="@+id/preview_carpark_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="Arndale St."
+        android:textSize="32sp"
+        android:fontFamily="sans-serif-condensed"/>
+
+    <TextView
+        android:id="@+id/preview_spaces_available_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/spaces_available"
+        android:textSize="18sp"
+        android:layout_below="@id/preview_carpark_name"
+        android:layout_marginTop="16dp"
+        android:layout_alignParentStart="true"
+        android:fontFamily="sans-serif-light"/>
+
+    <TextView
+        android:id="@+id/preview_spaces_available"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="123"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_marginLeft="16dip"
+        android:layout_alignBottom="@+id/preview_spaces_available_title"
+        android:layout_toEndOf="@+id/preview_spaces_available_title"/>
+
+    <RelativeLayout
+        android:id="@+id/preview_safety_circle_background"
+        android:layout_width="@dimen/safety_circle_side"
+        android:layout_height="@dimen/safety_circle_side"
+        tools:background="@drawable/safety_circle"
+        android:layout_marginLeft="@dimen/medium_padding"
+        android:layout_marginRight="@dimen/medium_padding"
+        android:layout_marginTop="4dp"
+        android:layout_alignBottom="@+id/spaces_available"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="41dp">
+
+        <TextView
+            style="@style/MapPinText"
+            android:id="@+id/preview_safety_rating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="A+"
+            android:layout_centerInParent="true"
+            android:textSize="24sp"/>
+
+    </RelativeLayout>
+
+
+
+
+
+</RelativeLayout>

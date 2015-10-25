@@ -3,7 +3,6 @@ package com.moopflops.safespace.ui.fragments;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,9 +19,9 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.VisibleRegion;
 import com.moopflops.safespace.R;
 import com.moopflops.safespace.engine.CarParkManager;
+import com.moopflops.safespace.engine.CarParkRatingTask;
 import com.moopflops.safespace.engine.Constants;
 import com.moopflops.safespace.engine.CrimeManager;
-import com.moopflops.safespace.engine.RatingUtils;
 import com.moopflops.safespace.engine.model.CarPark;
 import com.moopflops.safespace.engine.model.Crime;
 import com.moopflops.safespace.engine.model.RatedCarPark;
@@ -65,8 +64,8 @@ public class MapFragment extends Fragment {
                     @Override
                     public boolean onMarkerClick(Marker marker) {
 
-                        for(MapMarker mapMarker : mMapMarkers){
-                            if(mapMarker.marker.equals(marker)){
+                        for (MapMarker mapMarker : mMapMarkers) {
+                            if (mapMarker.marker.equals(marker)) {
                                 mSlidyView.setData(mapMarker.ratedCarPark);
                                 VisibleRegion visibleRegion = mGoogleMap.getProjection().getVisibleRegion();
                                 int viewHeight = mMapFragment.getView().getMeasuredHeight();
@@ -140,29 +139,38 @@ public class MapFragment extends Fragment {
         CarParkManager.getInstance().getCarParks(new CarParkManager.CarParkCallbacks() {
             @Override
             public void onSuccess(List<CarPark> carParks) {
-                double left = Double.MAX_VALUE, right = -Double.MAX_VALUE, top = Double.MAX_VALUE, bottom = -Double.MAX_VALUE;
-                for (CarPark carPark : carParks) {
-                    mRatedCarParks.add(new RatedCarPark(carPark, RatingUtils.getRatingForLocation(carPark.getLocation(), CrimeManager.getInstance().getCrimes())));
-
-                    if (carPark.latitude < left) {
-                        left = carPark.latitude;
+                CarParkRatingTask task = new CarParkRatingTask(new CarParkRatingTask.CarParkRatingListener() {
+                    @Override
+                    public void onComplete(List<RatedCarPark> ratedCarParks) {
+                        mRatedCarParks = ratedCarParks;
+                        addMapPins();
                     }
+                });
+                CarPark[] carParkArray = new CarPark[carParks.size()];
+                carParks.toArray(carParkArray);
 
-                    if (carPark.latitude > right) {
-                        right = carPark.latitude;
-                    }
+                task.execute(carParkArray);
+                //double left = Double.MAX_VALUE, right = -Double.MAX_VALUE, top = Double.MAX_VALUE, bottom = -Double.MAX_VALUE;
+//                for (CarPark carPark : carParks) {
 
-                    if (carPark.longitude > bottom) {
-                        bottom = carPark.longitude;
-                    }
-
-                    if (carPark.longitude < top) {
-                        top = carPark.longitude;
-                    }
-                }
+//                    if (carPark.latitude < left) {
+//                        left = carPark.latitude;
+//                    }
+//
+//                    if (carPark.latitude > right) {
+//                        right = carPark.latitude;
+//                    }
+//
+//                    if (carPark.longitude > bottom) {
+//                        bottom = carPark.longitude;
+//                    }
+//
+//                    if (carPark.longitude < top) {
+//                        top = carPark.longitude;
+//                    }
+//                }
 
 //                mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(new LatLngBounds(new LatLng(left, bottom), new LatLng(right, top)), 10));
-                addMapPins();
             }
 
 
