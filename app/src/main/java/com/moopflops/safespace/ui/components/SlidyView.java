@@ -17,6 +17,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.moopflops.safespace.R;
+import com.moopflops.safespace.engine.RatingUtils;
 import com.moopflops.safespace.engine.model.RatedCarPark;
 
 /**
@@ -29,6 +30,7 @@ public class SlidyView extends FrameLayout {
     private float mPreviewHeight;
     private float initialY;
     private float initialTranslation;
+    private boolean mEnabled;
 
     RelativeLayout mExpanded;
     TextView mTitle;
@@ -42,6 +44,7 @@ public class SlidyView extends FrameLayout {
     RelativeLayout mPreview;
     TextView mPreviewTitle;
     TextView mPreviewSpaces;
+    TextView mPreviewSpacesAvailableTitle;
     TextView mPreviewSafetyRating;
     RelativeLayout mPreviewSaferyCircleLayout;
 
@@ -83,6 +86,7 @@ public class SlidyView extends FrameLayout {
         mSafetyCircleLayout = (RelativeLayout) findViewById(R.id.safety_circle_background);
 
         mPreviewTitle = (TextView) findViewById(R.id.preview_carpark_name);
+        mPreviewSpacesAvailableTitle = (TextView) findViewById(R.id.preview_spaces_available_title);
         mPreviewSpaces = (TextView) findViewById(R.id.preview_spaces_available);
         mPreviewSafetyRating = (TextView) findViewById(R.id.preview_safety_rating);
         mPreviewSaferyCircleLayout = (RelativeLayout) findViewById(R.id.preview_safety_circle_background);
@@ -108,9 +112,9 @@ public class SlidyView extends FrameLayout {
                         break;
                     case MotionEvent.ACTION_UP:
                         if (lastDirection == SwipeDirection.DOWN) {
-                            animateTheFucker(getTranslationY(), getHeight() - mPreviewHeight);
+                            animateTheShitter(getTranslationY(), getHeight() - mPreviewHeight);
                         } else {
-                            animateTheFucker(getTranslationY(), 0);
+                            animateTheShitter(getTranslationY(), 0);
                         }
                         break;
                     case MotionEvent.ACTION_POINTER_DOWN:
@@ -118,11 +122,13 @@ public class SlidyView extends FrameLayout {
                     case MotionEvent.ACTION_POINTER_UP:
                         break;
                     case MotionEvent.ACTION_MOVE:
-                        float dy = (Y - initialY);
-                        lastDirection = dy > 0 ? SwipeDirection.DOWN : SwipeDirection.UP;
-                        float newY = initialTranslation + dy;
-                        if (newY <= 0 || newY >= getHeight() - mPreviewHeight) break;
-                        setTranslationY(newY);
+                        if(mEnabled) {
+                            float dy = (Y - initialY);
+                            lastDirection = dy > 0 ? SwipeDirection.DOWN : SwipeDirection.UP;
+                            float newY = initialTranslation + dy;
+                            if (newY <= 0 || newY >= getHeight() - mPreviewHeight) break;
+                            setTranslationY(newY);
+                        }
                         break;
                 }
                 return true;
@@ -136,15 +142,17 @@ public class SlidyView extends FrameLayout {
 
         double showFactor = (translationY / (getHeight() - mPreviewHeight));
 
-        mPreview.setAlpha((float)showFactor);
-        mExpanded.setAlpha(1f - (float)showFactor);
+        mPreview.setAlpha((float) showFactor);
+        mExpanded.setAlpha(1f - (float) showFactor);
     }
 
-    private void animateTheFucker(float start, float end) {
-        ObjectAnimator animator = ObjectAnimator.ofFloat(this, View.TRANSLATION_Y, start, end);
-        animator.setInterpolator(new DecelerateInterpolator());
-        animator.setDuration(200);
-        animator.start();
+    private void animateTheShitter(float start, float end) {
+        if(mEnabled) {
+            ObjectAnimator animator = ObjectAnimator.ofFloat(this, View.TRANSLATION_Y, start, end);
+            animator.setInterpolator(new DecelerateInterpolator());
+            animator.setDuration(200);
+            animator.start();
+        }
     }
 
     @Override
@@ -157,12 +165,32 @@ public class SlidyView extends FrameLayout {
         }
     }
 
-    private boolean isOpen(){
+    public boolean isOpen(){
         return getTranslationY() == 0;
     }
 
     public float getVisibleHeight(){
         return isOpen() ? getHeight() : mPreviewHeight;
+    }
+
+    public void setEnabled(boolean enabled){
+        mEnabled = enabled;
+    }
+
+    public void close() {
+        animateTheShitter(getTranslationY(), getHeight() - mPreviewHeight);
+    }
+
+    public void setMyLocationData(int rating) {
+        setEnabled(false);
+        mPreviewTitle.setText("My Location");
+        Drawable tintedDrawable = getResources().getDrawable(R.drawable.safety_circle).getConstantState().newDrawable().mutate();
+        tintedDrawable.setColorFilter(new PorterDuffColorFilter(RatingUtils.getColour(getContext(), rating), PorterDuff.Mode.MULTIPLY));
+
+        mPreviewSaferyCircleLayout.setBackground(tintedDrawable);
+        mPreviewSafetyRating.setText(RatingUtils.getRating(rating));
+        mPreviewSpaces.setText("");
+        mPreviewSpacesAvailableTitle.setVisibility(View.GONE);
     }
 
     public void setData(RatedCarPark ratedCarPark){
@@ -173,15 +201,15 @@ public class SlidyView extends FrameLayout {
         mCapacity.setText(String.valueOf(ratedCarPark.carPark.capacity));
         mAvailableSpaces.setText(String.valueOf(ratedCarPark.carPark.spacesNow));
         mPredictedSpaces.setText(String.valueOf(ratedCarPark.carPark.spaces30));
-        mSafetyRating.setText(ratedCarPark.getRating());
+        mSafetyRating.setText(RatingUtils.getRating(ratedCarPark.rating));
 
         mPreviewTitle.setText(ratedCarPark.carPark.name);
         mPreviewSpaces.setText(String.valueOf(ratedCarPark.carPark.spacesNow));
-        mPreviewSafetyRating.setText(ratedCarPark.getRating());
-
+        mPreviewSpacesAvailableTitle.setVisibility(View.VISIBLE);
+        mPreviewSafetyRating.setText(RatingUtils.getRating(ratedCarPark.rating));
 
         Drawable tintedDrawable = getResources().getDrawable(R.drawable.safety_circle).getConstantState().newDrawable().mutate();
-        tintedDrawable.setColorFilter(new PorterDuffColorFilter(ratedCarPark.getColour(getContext()), PorterDuff.Mode.MULTIPLY));
+        tintedDrawable.setColorFilter(new PorterDuffColorFilter(RatingUtils.getColour(getContext(), ratedCarPark.rating), PorterDuff.Mode.MULTIPLY));
 
         mSafetyCircleLayout.setBackground(tintedDrawable);
         mPreviewSaferyCircleLayout.setBackground(tintedDrawable);
