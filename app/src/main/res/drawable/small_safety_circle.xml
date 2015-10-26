@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:width="@dimen/small_safety_circle_side"
+        android:height="@dimen/small_safety_circle_side">
+    <shape
+        android:shape="oval">
+        <solid
+            android:color="@color/black"/>
+    </shape>
+    </item>
+    <item
+        android:bottom="@dimen/safety_circle_padding"
+        android:top="@dimen/safety_circle_padding"
+        android:right="@dimen/safety_circle_padding"
+        android:left="@dimen/safety_circle_padding">
+    <shape
+        android:shape="oval">
+        <solid
+            android:color="@color/white"/>
+    </shape>
+
+    </item>
+</layer-list>

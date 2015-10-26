@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import com.moopflops.safespace.R;
 import com.moopflops.safespace.engine.CarParkManager;
@@ -23,6 +24,7 @@ import java.util.List;
 public class FiltersFragment extends Fragment {
 
     private CarParkAdapter mAdapter;
+    ProgressBar mProgress;
 
     public static FiltersFragment newInstance() {
         return new FiltersFragment();
@@ -31,6 +33,8 @@ public class FiltersFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_filters, container, false);
+
+        mProgress = (ProgressBar) rootView.findViewById(R.id.progress);
 
         final RecyclerView mRecyclerView = (RecyclerView) rootView.findViewById(R.id.car_park_list);
         mRecyclerView.setHasFixedSize(true);
@@ -44,6 +48,8 @@ public class FiltersFragment extends Fragment {
                 CarParkRatingTask task = new CarParkRatingTask(new CarParkRatingTask.CarParkRatingListener() {
                     @Override
                     public void onComplete(List<RatedCarPark> ratedCarParks) {
+                        mProgress.setVisibility(View.GONE);
+                        mRecyclerView.setVisibility(View.VISIBLE);
                         mAdapter = new CarParkAdapter(ratedCarParks);
                         mRecyclerView.setAdapter(mAdapter);
                     }

@@ -29,7 +29,7 @@ public class CarParkAdapter extends RecyclerView.Adapter<CarParkAdapter.CPViewHo
 
   @Override
   public CPViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-    return new CPViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.preview_layout, parent, false));
+    return new CPViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.car_park_cell, parent, false));
   }
 
   @Override
@@ -48,6 +48,7 @@ public class CarParkAdapter extends RecyclerView.Adapter<CarParkAdapter.CPViewHo
     TextView title;
     TextView spaces;
     TextView rating;
+    TextView totalSpaces;
     RelativeLayout background;
 
     public CPViewHolder(View itemView) {
@@ -56,13 +57,15 @@ public class CarParkAdapter extends RecyclerView.Adapter<CarParkAdapter.CPViewHo
       title = (TextView) itemView.findViewById(R.id.preview_carpark_name);
       spaces = (TextView) itemView.findViewById(R.id.preview_spaces_available);
       rating = (TextView) itemView.findViewById(R.id.preview_safety_rating);
+      totalSpaces = (TextView) itemView.findViewById(R.id.preview_total_spaces);
       background = (RelativeLayout) itemView.findViewById(R.id.preview_safety_circle_background);
     }
 
     public void bindData(RatedCarPark carPark) {
       title.setText(carPark.carPark.name);
-      spaces.setText(carPark.carPark.spacesNow+"");
+      spaces.setText(String.valueOf(carPark.carPark.spacesNow));
       rating.setText(RatingUtils.getRating(carPark.rating));
+      totalSpaces.setText(String.valueOf(carPark.carPark.capacity));
 
       Drawable tintedDrawable = itemView.getContext().getResources().getDrawable(R.drawable.safety_circle).getConstantState().newDrawable().mutate();
       tintedDrawable.setColorFilter(new PorterDuffColorFilter(RatingUtils.getColour(itemView.getContext(), carPark.rating), PorterDuff.Mode.MULTIPLY));

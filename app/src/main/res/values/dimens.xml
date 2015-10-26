@@ -14,5 +14,7 @@
     <dimen name="safety_circle_side">74dip</dimen>
     <dimen name="safety_circle_padding">2dip</dimen>
     <dimen name="preview_height">120dp</dimen>
+    <dimen name="small_safety_circle_side">48sp</dimen>
+    <dimen name="small_padding">4dip</dimen>
 
 </resources>
